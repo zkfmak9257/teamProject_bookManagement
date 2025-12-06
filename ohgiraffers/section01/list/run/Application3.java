@@ -9,258 +9,398 @@ import java.util.Scanner;
 
 public class Application3 {
 
-    private Scanner sc = new Scanner(System.in);
-    private BookService bookService = new BookService();
+  private Scanner sc = new Scanner(System.in);
+  private BookService bookService = new BookService();
 
-    public static void main(String[] args) {
-        new Application3().run();
-    }
+  public static void main(String[] args) {
+    new Application3().run();
+  }
 
-    public void run(){
+  public void run() {
 
-        int input = 0;
+    int input = 0;
 
-        do{
-            System.out.println("\n===== 도서 관리 프로그램 =====\n");
-            System.out.println("1. 모든 도서 목록 조회");
-            System.out.println("2. 도서 상세 조회(도서 번호)");
-            System.out.println("3. 도서 추가");
-            System.out.println("4. 도서 수정");
-            System.out.println("5. 도서 제거");
-            System.out.println("6. 도서 검색");
-            System.out.println("7. 도서 정렬");
-            System.out.println("0. 프로그램 종료");
+    do {
+      System.out.println("\n===== 도서 관리 프로그램 =====\n");
+      System.out.println("1. 모든 도서 목록 조회");
+      System.out.println("2. 도서 상세 조회(도서 번호)");
+      System.out.println("3. 도서 추가");
+      System.out.println("4. 도서 수정");
+      System.out.println("5. 도서 제거");
+      System.out.println("6. 도서 검색");
+      System.out.println("7. 도서 정렬");
+      System.out.println("8. 예약자 관리");
 
-            try{
-                System.out.print("번호 선택 >> ");
-                input = sc.nextInt();
-                sc.nextLine(); // 입력 버퍼 개행 문자 제거
+      System.out.println("0. 프로그램 종료");
 
-                switch(input){
-                    case 1: selectAll(); break;
-                    case 2: selectBookNumber(); break;
-                    case 3: addBook(); break;
-                    case 4: updateBook(); break;
-                    case 5: deleteBook(); break;
-                    case 6: searchBook(); break;
-                    case 7: sortBookList(); break;
-                    case 0:
-                        System.out.println("!@#$% 프로그램을 종료합니다. %$#@!"); break;
-                    default:
-                        System.out.println("@@@@@ 메뉴 목록에 존재하는 번호를 입력하세요. @@@@@");
-                }
-
-            }catch (InputMismatchException e){
-                System.out.println("##### 입력 형식이 잘못되었습니다. ######");
-                sc.nextLine(); // 입력 버퍼에 남은 잘못된 문자열 제거
-                input = -1; // 첫 반복 입력 오류 시 비정상 종료 막기
-
-            }catch (Exception e){ // 나머지 예외 발생 처리
-                System.out.println("##### 예외 발생. 관리자에게 문의하세요. #####");
-                e.printStackTrace();
-            }
-
-        }while(input != 0);
-    }
-
-
-    /**
-     * 1. 모든 도서 목록 조회
-     */
-    private void selectAll(){
-        System.out.println("\n*** 도서 목록 조회 ***\n");
-        List<BookDTO> books = bookService.getBookList();
-
-        // 향상된 for문
-        for(BookDTO book : books){
-            System.out.println(book);
-        }
-    }
-
-
-    /**
-     * 2. 도서 상세 조회(도서 번호)
-     * @throws InputMismatchException
-     */
-    private void selectBookNumber() throws InputMismatchException{
-        System.out.print("\n*** 도서 상세 조회(도서 번호) ***\n");
-        System.out.print("상세 조회할 도서 번호 입력 : ");
-        int bookNumber = sc.nextInt();
-
-        // 서비스 호출
-        BookDTO book = bookService.selectBookNumber(bookNumber);
-
-        if(book == null){
-            System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
-            return;
-        }
-
-        System.out.println("책 번호: " + book.getNumber());
-        System.out.println("책 제목: " + book.getTitle());
-        System.out.println("책 저자: " + book.getAuthor());
-        System.out.println("책 분류: " + book.getGenre());
-        System.out.println("출판사: " + book.getPublisher());
-        System.out.println("출판년도: " + book.getYear());
-        System.out.println("책 가격: " + book.getPrice() + "원");
-        System.out.println("대여가능 여부: " + book.isAvailable() + "원");
-        System.out.println("책 상태: " + book.getCondition() + "원");
-    }
-
-    /**
-     * 3. 도서 추가
-     */
-    private void addBook(){
-        System.out.print("\n*** 도서 추가 ***\n");
-
-        System.out.print("책 제목 입력 : ");
-        String title = sc.nextLine();
-
-        System.out.print("책 저자 입력 : ");
-        String author = sc.nextLine();
-
-        System.out.print("책 분류 입력 : ");
-        String genre = sc.nextLine();
-
-        System.out.print("출판사 입력 : ");
-        String publisher = sc.nextLine();
-
-        System.out.print("출판년도 입력 : ");
-        int year = sc.nextInt();
-        sc.nextLine();
-
-        System.out.print("책 가격 입력 : ");
-        int price = sc.nextInt();
-        sc.nextLine();
-
-        System.out.print("대여가능 여부 입력 : ");
-        boolean isAvailable = sc.nextBoolean();
-        sc.nextLine();
-
-        System.out.print("책 상태 입력 : ");
-        String condition = sc.nextLine();
-
-        // DTO(Data Transfer Object) : 계층간 데이터 전달 목적의 객체
-        // BookDTO 객체 생성 및 값 대입
-        BookDTO book = new BookDTO();
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setGenre(genre);
-        book.setPublisher(publisher);
-        book.setYear(year);
-        book.setPrice(price);
-        book.setAvailable(isAvailable);
-        book.setCondition(condition);
-
-        // 서비스 호출
-        int bookNumber = bookService.addBook(book);
-
-        if(bookNumber == 0){
-            System.out.println("@@@ 책 추가에 실패했습니다. @@@");
-            return;
-        }
-
-        System.out.println(bookNumber + "번 책이 추가 되었습니다.");
-    }
-
-
-    /**
-     * 4. 도서 수정
-     */
-    private void updateBook(){
-        System.out.print("\n*** 도서 수정 ***\n");
-
-        // 1. 책 번호로 수정할 책이 있는지 검색
-        //  -> 없으면 메서드 종료
-        System.out.print("수정할 도서 번호 입력 : ");
-        int bookNumber = sc.nextInt();
+      try {
+        System.out.print("번호 선택 >> ");
+        input = sc.nextInt();
         sc.nextLine(); // 입력 버퍼 개행 문자 제거
 
-        // 서비스 호출
-        BookDTO book = bookService.selectBookNumber(bookNumber);
+        switch (input) {
+          case 1:
+            selectAll();
+            break;
+          case 2:
+            selectBookNumber();
+            break;
+          case 3:
+            addBook();
+            break;
+          case 4:
+            updateBook();
+            break;
+          case 5:
+            deleteBook();
+            break;
+          case 6:
+            searchBook();
+            break;
+          case 7:
+            sortBookList();
+            break;
+          case 8:
+            manageReservation();
+            break;
 
-        if(book == null){
-            System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
-            return;
+          case 0:
+            System.out.println("!@#$% 프로그램을 종료합니다. %$#@!");
+            break;
+          default:
+            System.out.println("@@@@@ 메뉴 목록에 존재하는 번호를 입력하세요. @@@@@");
         }
 
-        // 2. 해당 책의 제목, 저자, 가격을 수정
-        System.out.print("수정할 책 제목 : ");
-        String updateTitle = sc.nextLine();
+      } catch (InputMismatchException e) {
+        System.out.println("##### 입력 형식이 잘못되었습니다. ######");
+        sc.nextLine(); // 입력 버퍼에 남은 잘못된 문자열 제거
+        input = -1; // 첫 반복 입력 오류 시 비정상 종료 막기
 
-        System.out.print("수정할 책 저자 : ");
-        String updateAuthor = sc.nextLine();
+      } catch (Exception e) { // 나머지 예외 발생 처리
+        System.out.println("##### 예외 발생. 관리자에게 문의하세요. #####");
+        e.printStackTrace();
+      }
+    } while (input != 0);
+  }
+  /**
+   * 1. 모든 도서 목록 조회
+   */
+  private void selectAll() {
+    System.out.println("\n*** 도서 목록 조회 ***\n");
+    List<BookDTO> books = bookService.getBookList();
 
-        System.out.print("수정할 책 가격 : ");
-        int updatePrice = sc.nextInt();
-        sc.nextLine();
+    // 향상된 for문
+    for (BookDTO book : books) {
+      System.out.println(book);
+    }
+  }
+  /**
+   * 2. 도서 상세 조회(도서 번호)
+   *
+   * @throws InputMismatchException
+   */
+  private void selectBookNumber() throws InputMismatchException {
+    System.out.print("\n*** 도서 상세 조회(도서 번호) ***\n");
+    System.out.print("상세 조회할 도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    // 서비스 호출
+    BookDTO book = bookService.selectBookNumber(bookNumber);
 
-        book.setTitle(updateTitle);
-        book.setAuthor(updateAuthor);
-        book.setPrice(updatePrice);
-
-        System.out.println("*** 책 정보가 수정 되었습니다 ***");
+    if (book == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
     }
 
-    /**
-     * 5. 도서 제거
-     */
-    private void deleteBook(){
-        System.out.print("\n*** 도서 제거 ***\n");
+    System.out.println("책 번호: " + book.getNumber());
+    System.out.println("책 제목: " + book.getTitle());
+    System.out.println("책 저자: " + book.getAuthor());
+    System.out.println("책 분류: " + book.getGenre());
+    System.out.println("출판사: " + book.getPublisher());
+    System.out.println("출판년도: " + book.getYear());
+    System.out.println("책 가격: " + book.getPrice() + "원");
+    System.out.println("대여가능 여부: " + book.isAvailable() + "원");
+    System.out.println("책 상태: " + book.getCondition() + "원");
+  }
 
-        System.out.print("제거할 도서 번호 입력 : ");
-        int bookNumber = sc.nextInt();
-        sc.nextLine();
+  /**
+   * 3. 도서 추가
+   */
+  private void addBook() {
+    System.out.print("\n*** 도서 추가 ***\n");
 
-        // 서비스 호출
-        BookDTO deletedBook = bookService.deleteBook(bookNumber);
+    System.out.print("책 제목 입력 : ");
+    String title = sc.nextLine();
 
-        if(deletedBook == null){
-            System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
-            return;
-        }
+    System.out.print("책 저자 입력 : ");
+    String author = sc.nextLine();
 
-        System.out.println(deletedBook.getTitle() + "이/가 제거 되었습니다.");
+    System.out.print("책 분류 입력 : ");
+    String genre = sc.nextLine();
 
+    System.out.print("출판사 입력 : ");
+    String publisher = sc.nextLine();
+
+    System.out.print("출판년도 입력 : ");
+    int year = sc.nextInt();
+    sc.nextLine();
+
+    System.out.print("책 가격 입력 : ");
+    int price = sc.nextInt();
+    sc.nextLine();
+
+    System.out.print("대여가능 여부 입력 : ");
+    boolean isAvailable = sc.nextBoolean();
+    sc.nextLine();
+
+    System.out.print("책 상태 입력 : ");
+    String condition = sc.nextLine();
+
+    // DTO(Data Transfer Object) : 계층간 데이터 전달 목적의 객체
+    // BookDTO 객체 생성 및 값 대입
+    BookDTO book = new BookDTO();
+    book.setTitle(title);
+    book.setAuthor(author);
+    book.setGenre(genre);
+    book.setPublisher(publisher);
+    book.setYear(year);
+    book.setPrice(price);
+    book.setAvailable(isAvailable);
+    book.setCondition(condition);
+
+    // 서비스 호출
+    int bookNumber = bookService.addBook(book);
+
+    if (bookNumber == 0) {
+      System.out.println("@@@ 책 추가에 실패했습니다. @@@");
+      return;
     }
 
-    /**
-     * 6. 도서 검색
-     */
-    private void searchBook(){
-        System.out.print("\n*** 도서 검색(제목 부분 일치 검색) ***\n");
+    System.out.println(bookNumber + "번 책이 추가 되었습니다.");
+  }
 
-        System.out.print("검색할 책 제목 입력 : ");
-        String keyword = sc.nextLine();
+  /**
+   * 4. 도서 수정
+   */
+  private void updateBook() {
+    System.out.print("\n*** 도서 수정 ***\n");
 
-        // 서비스 호출
-        List<BookDTO> searchBookList = bookService.searchBook(keyword);
+    // 1. 책 번호로 수정할 책이 있는지 검색
+    //  -> 없으면 메서드 종료
+    System.out.print("수정할 도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    sc.nextLine(); // 입력 버퍼 개행 문자 제거
 
-        if(searchBookList == null || searchBookList.isEmpty()){
-            System.out.println("검색 결과가 없습니다.");
-            return;
-        }
+    // 서비스 호출
+    BookDTO book = bookService.selectBookNumber(bookNumber);
 
-        for(BookDTO book : searchBookList){
-            System.out.println(book);
-        }
+    if (book == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
     }
 
-    /**
-     * 7. 도서 정렬 (원본은 유지하고 싶다!)
-     */
-    private void sortBookList(){
-        System.out.print("\n*** 도서 정렬 목록 조회 ***\n");
+    // 2. 해당 책의 제목, 저자, 가격을 수정
+    System.out.print("수정할 책 제목 : ");
+    String updateTitle = sc.nextLine();
 
-        System.out.println("1. 도서명 오름차순");
-        System.out.println("2. 가격 오름차순");
-        int sortingNumber = sc.nextInt();
-        sc.nextLine();
+    System.out.print("수정할 책 저자 : ");
+    String updateAuthor = sc.nextLine();
 
-        // 서비스 구현
-        List<BookDTO> books = bookService.sortBookList(sortingNumber);
+    System.out.print("수정할 책 가격 : ");
+    int updatePrice = sc.nextInt();
+    sc.nextLine();
 
-        for(BookDTO book : books){
-            System.out.println(book);
-        }
+    book.setTitle(updateTitle);
+    book.setAuthor(updateAuthor);
+    book.setPrice(updatePrice);
+
+    System.out.println("*** 책 정보가 수정 되었습니다 ***");
+  }
+
+  /**
+   * 5. 도서 제거
+   */
+  private void deleteBook() {
+    System.out.print("\n*** 도서 제거 ***\n");
+
+    System.out.print("제거할 도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    sc.nextLine();
+
+    // 서비스 호출
+    BookDTO deletedBook = bookService.deleteBook(bookNumber);
+
+    if (deletedBook == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
     }
+
+    System.out.println(deletedBook.getTitle() + "이/가 제거 되었습니다.");
+  }
+
+  /**
+   * 6. 도서 검색
+   */
+  private void searchBook() {
+    System.out.print("\n*** 도서 검색(제목 부분 일치 검색) ***\n");
+
+    System.out.print("검색할 책 제목 입력 : ");
+    String keyword = sc.nextLine();
+
+    // 서비스 호출
+    List<BookDTO> searchBookList = bookService.searchBook(keyword);
+
+    if (searchBookList == null || searchBookList.isEmpty()) {
+      System.out.println("검색 결과가 없습니다.");
+      return;
+    }
+
+    for (BookDTO book : searchBookList) {
+      System.out.println(book);
+    }
+  }
+
+  /**
+   * 7. 도서 정렬 (원본은 유지하고 싶다!)
+   */
+  private void sortBookList() {
+    System.out.print("\n*** 도서 정렬 목록 조회 ***\n");
+
+    System.out.println("1. 도서명 오름차순");
+    System.out.println("2. 가격 오름차순");
+    int sortingNumber = sc.nextInt();
+    sc.nextLine();
+
+    // 서비스 구현
+    List<BookDTO> books = bookService.sortBookList(sortingNumber);
+
+    for (BookDTO book : books) {
+      System.out.println(book);
+    }
+  }
+
+  //
+
+  private void manageReservation() {
+    int input = -1;
+
+    do {
+      System.out.println("\n*** 예약자 관리 ***");
+      System.out.println("1. 예약 신청");
+      System.out.println("2. 다음 예약자 처리");
+      System.out.println("3. 예약 현황 조회");
+      System.out.println("0. 상위 메뉴로");
+
+      System.out.print("번호 선택 >> ");
+      input = sc.nextInt();
+      sc.nextLine();
+
+      switch (input) {
+        case 1:
+          addReservation();
+          break;
+        case 2:
+          processNextReservation();
+          break;
+        case 3:
+          showReservationInfo();
+          break;
+        case 0:
+          System.out.println("상위 메뉴로 돌아갑니다.");
+          break;
+        default:
+          System.out.println("메뉴에 있는 번호만 입력하세요.");
+      }
+
+    } while (input != 0);
+  }
+
+  /**
+   * 예약 신청
+   */
+  private void addReservation() {
+
+    System.out.print("\n*** 예약 신청 ***\n");
+
+    System.out.print("예약할 도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    sc.nextLine();
+
+    BookDTO book = bookService.selectBookNumber(bookNumber);
+
+    if (book == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
+    }
+
+    System.out.print("예약자 이름 또는 아이디 입력 : ");
+    String user = sc.nextLine();
+
+    boolean result = book.addReservation(user);
+
+    if (result) {
+      System.out.println("예약이 완료되었습니다!");
+      System.out.println("현재 대기 인원 수 : " + book.getReservationCount());
+      System.out.println("다음 순번 예약자 : " + book.peekNextReservation());
+    } else {
+      System.out.println("예약에 실패했습니다.");
+    }
+  }
+
+  /**
+   * 다음 예약자 처리 (대기열에서 꺼내기)
+   */
+  private void processNextReservation() {
+
+    System.out.print("\n*** 다음 예약자 처리 ***\n");
+
+    System.out.print("도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    sc.nextLine();
+
+    BookDTO book = bookService.selectBookNumber(bookNumber);
+
+    if (book == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
+    }
+
+    if (!book.hasReservations()) {
+      System.out.println("예약 대기자가 없습니다.");
+      return;
+    }
+
+    String next = book.pollNextReservation();
+
+    System.out.println("다음 예약자 처리 완료 : " + next);
+    System.out.println("남은 대기 인원 : " + book.getReservationCount());
+  }
+
+  /**
+   * 예약 현황 조회
+   */
+  private void showReservationInfo() {
+
+    System.out.print("\n*** 예약 현황 조회 ***\n");
+
+    System.out.print("도서 번호 입력 : ");
+    int bookNumber = sc.nextInt();
+    sc.nextLine();
+
+    BookDTO book = bookService.selectBookNumber(bookNumber);
+
+    if (book == null) {
+      System.out.println("@@@ 일치하는 번호의 책이 없습니다. @@@");
+      return;
+    }
+
+    int count = book.getReservationCount();
+
+    System.out.println("현재 대기 인원 수 : " + count);
+
+    if (count > 0) {
+      System.out.println("다음 순번 예약자 : " + book.peekNextReservation());
+    }
+
+  }
+
 }
